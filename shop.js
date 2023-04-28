@@ -65,29 +65,54 @@ const itemsFadeOut = () => {
   crudFadeIn();
 };
 
-// UPDATE FUNCTIONS
 const findItem = (objects) => {
   // get the index of the item that the user wants to change
   let itemNumber = prompt("Enter the item's number: ");
-
+  console.log("Item Number " + itemNumber)
   // get the new data 
   let newPrice = prompt("Enter the price");
+  console.log("New Price " + newPrice)
   let newRating = prompt("Enter the average rating");
 
-  // rewrite the old data
-  // objects[itemNumber - 1].price = newPrice;
-  // objects[itemNumber - 1].rating.rate = newRating;
-  objects[itemNumber - 1] = {
-    "price": newPrice,
-  };
+  // update the old data
+  objects[itemNumber - 1].price = newPrice;
+  objects[itemNumber - 1].rating.rate = newRating;
 
-  alert(objects[itemNumber-1].price);
+  // log the updated item to the console
+  console.log(objects[itemNumber - 1]);
 
-  // empty out the old content, then replace it with the updated API
-  // $(".content").animate({opacity: '0'}, 'fast');
-  // $(".content").empty();
+  // alert the updated price to the user
+  alert(objects[itemNumber - 1].price);
 
-  // APICall();
+  // update the content with the updated data
+  updateContent(objects);
+};
+
+// This function to update the content with the updated data that is being passed in
+const updateContent = (objects) => {
+  // This will empty out the old content
+  $(".content").empty();
+
+  // This will loop through the objects and add them to the content
+  objects.forEach((article) => {
+    let flipCard = $("<div>").addClass("flip-card");
+    let flipCardInner = $("<div>").addClass("flip-card-inner");
+    let flipCardFront = $("<div>").addClass("flip-card-front");
+    let item = $("<div>").addClass("item");
+    let img = $("<img>").attr("src", article.image);
+    item.append(img);
+    flipCardFront.append(item);
+    let flipCardBack = $("<div>").addClass("flip-card-back");
+    let price = $("<p>").html(`Price: $${article.price} <br/><br/>`);
+    let rating = $("<p>").text(`Customer Rating: ${article.rating.rate}/5`);
+    flipCardBack.append(price, rating);
+    flipCardInner.append(flipCardFront, flipCardBack);
+    flipCard.append(flipCardInner);
+    $(".content").append(flipCard);
+  });
+
+  // animate the content to fade in
+  $(".content").animate({opacity: '1'}, 'fast');
 };
 
 const editItem = () => {
