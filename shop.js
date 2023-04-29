@@ -63,27 +63,27 @@ const itemsFadeOut = () => {
   $(".editButton").empty();
   $(".deleteButton").animate({opacity: '0'}, 'fast');
   $(".deleteButton").empty();
+  $(".createButton").animate({opacity: '0'}, 'fast');
+  $(".createButton").empty();
   crudFadeIn();
 };
 
 const createItem = (objects) => {
   if (objects.length == 12) {
     alert("You have the max items in your inventory. Remove an item, then come back.")
-    userChoice();
   }
   else {
     let itemPrice = prompt("Enter the price of this new item");
     let itemRating = prompt("Enter the rating of this new item");
     let newIndex = objects.length;
-    let randomIndex = Math.floor(Math.random()*6);
+    let randomIndex = Math.floor((Math.random()*5)+1);
     console.log("Random shirt image num: "+ randomIndex);
-    let itemPic = spareShirts[randomIndex];
 
     let item = {
       "category": "women's clothing",
       "description": "new clothing added by user",
       "id": 11,
-      "image": "images/shirt1.jpg",
+      "image": `images/shirt${randomIndex}.jpg`,
       "price": itemPrice,
       "rating": {
         "count": 300,
@@ -188,6 +188,7 @@ const userChoice = (objects) => {
     $(".content").animate({opacity: '1'}, 'slow');
 
     $(".homeButton").animate({opacity: '1'}, 'slow');
+    $(".homeButton").animate({left: '2100px'}, 'fast');
     $(".homeButton").text("Return Home");
   });
 

@@ -155,6 +155,7 @@ p {
     top: -10px;
 }
 
-.editButton, .deleteButton {
+.editButton, .deleteButton, .createButton {
     opacity: 0;
+    position: relative;
 }
