@@ -1,9 +1,10 @@
 spareShirts =  {
-  shirt1: "images/shirt1.jpg",
-  shirt2: "images/shirt2.avif",
-  shirt3: "images/shirt3.webp",
+  shirt1: "",
+  shirt2: "",
+  shirt3: "",
   shirt4: "images/shirt4.jpg",
   shirt5: "images/shirt5.jpg",
+  shirt6: "images/shirt6.webp",
 };
 
 // this function turns the API data into readable flip cards 
@@ -30,7 +31,7 @@ const successfullyExecutedAPI = (data) => {
     console.log("successAPI", data);
     let markup = process(data);
     $(".content").html(markup);
-    $(".content").animate({opacity: '1'}, 'slow');
+    userChoice(data);
 };
 
 // calls the API and passes data to another function
@@ -40,13 +41,11 @@ const APICall = () => {
 
   // fades out the CRUD options
 const crudFadeOut = () => {
-    console.log("fadeout function");
     $(".crudOption").animate({opacity: '0'}, 'slow');
 };
 
 // fades in the CRUD options
 const crudFadeIn = () => {
-  console.log("fadein function");
   $(".crudOption").animate({opacity: '1'}, 'fast');
 };
 
@@ -62,10 +61,48 @@ const itemsFadeOut = () => {
   $(".homeButton").animate({opacity: '0'}, 'fast');
   $(".editButton").animate({opacity: '0'}, 'fast');
   $(".editButton").empty();
+  $(".deleteButton").animate({opacity: '0'}, 'fast');
+  $(".deleteButton").empty();
   crudFadeIn();
 };
 
-const findItem = (objects) => {
+const createItem = (objects) => {
+  if (objects.length == 12) {
+    alert("You have the max items in your inventory. Remove an item, then come back.")
+    userChoice();
+  }
+  else {
+    let itemPrice = prompt("Enter the price of this new item");
+    let itemRating = prompt("Enter the rating of this new item");
+    let newIndex = objects.length;
+    let randomIndex = Math.floor(Math.random()*6);
+    console.log("Random shirt image num: "+ randomIndex);
+    let itemPic = spareShirts[randomIndex];
+
+    let item = {
+      "category": "women's clothing",
+      "description": "new clothing added by user",
+      "id": 11,
+      "image": "images/shirt1.jpg",
+      "price": itemPrice,
+      "rating": {
+        "count": 300,
+        "rate": itemRating,
+      },
+      "title": "women's top",
+    };
+  
+    objects.push(item);
+
+    console.log(objects[newIndex]);
+    
+    updateContent(objects);
+    
+    
+  };
+};
+
+const editItem = (objects) => {
   // get the index of the item that the user wants to change
   let itemNumber = prompt("Enter the item's number: ");
   console.log("Item Number " + itemNumber)
@@ -80,9 +117,6 @@ const findItem = (objects) => {
 
   // log the updated item to the console
   console.log(objects[itemNumber - 1]);
-
-  // alert the updated price to the user
-  alert(objects[itemNumber - 1].price);
 
   // update the content with the updated data
   updateContent(objects);
@@ -114,28 +148,36 @@ const updateContent = (objects) => {
   // animate the content to fade in
   $(".content").animate({opacity: '1'}, 'fast');
 };
-
-const editItem = () => {
-    // call the API and pass the data to the findItem function
-    $.getJSON("https://fakestoreapi.com/products/category/women's clothing", findItem);
-};
 // --------------
 
 // DELETE FUNCTIONS
-const deleteFoundItem = (objects) => {
+const deleteItem = (objects) => {
   let itemNumber = prompt("Enter the number of the item you wish to remove");
   objects.splice(itemNumber - 1, 1);
-  APICall();
+  updateContent(objects);
 
 };
 
-const deleteItem = () => {
-  $.getJSON("https://fakestoreapi.com/products/category/women's clothing", deleteFoundItem);
-};
-
-const userChoice = () => {
+const userChoice = (objects) => {
   $(".subHeader").text("What'll It Be?");
   crudFadeIn();
+
+  // ------ CREATE ------ //
+  $(".create").on("click", function () {
+    $(".subHeader").empty();
+    $(".subHeader").text("Adding A New Item To The Inventory?");
+
+    crudFadeOut();
+    $(".content").animate({opacity: '1'}, 'slow');
+    $(".homeButton").animate({opacity: '1'}, 'slow');
+    $(".homeButton").text("Return Home");
+
+    $(".createButton").text("Create Item");
+    $(".createButton").animate({opacity: '1'}, 'slow');
+    $(".createButton").on("click", function () {
+      createItem(objects);
+    });
+  });
 
   // ------ READ ------ //
   $(".read").on("click", function () {
@@ -143,7 +185,7 @@ const userChoice = () => {
     $(".subHeader").text("Hover Over An Item To View Details");
 
     crudFadeOut();
-    APICall();
+    $(".content").animate({opacity: '1'}, 'slow');
 
     $(".homeButton").animate({opacity: '1'}, 'slow');
     $(".homeButton").text("Return Home");
@@ -153,11 +195,11 @@ const userChoice = () => {
   $(".update").on("click", function () {
     // rewrite the subheader title
     $(".subHeader").empty();
-    $(".subHeader").text("Click Below To Edit An Item");
+    $(".subHeader").text("What Would You Like To Edit?");
 
     // fade away the CRUD options and make the API details appear
     crudFadeOut();
-    APICall();
+    $(".content").animate({opacity: '1'}, 'slow');
 
     // home button appearance
     $(".homeButton").animate({opacity: '1'}, 'slow');
@@ -166,18 +208,20 @@ const userChoice = () => {
     // edit button appearance
     $(".editButton").text("Edit Item");
     $(".editButton").animate({opacity: '1'}, 'slow');
-
+    $(".editButton").on("click", function () {
+      editItem(objects);
+    });
   });
 
    // ------ DELETE ------ //
    $(".delete").on("click", function () {
     // rewrite the subheader title
     $(".subHeader").empty();
-    $(".subHeader").text("Click Below To Remove An Item");
+    $(".subHeader").text("Which Item Are You Removing?");
 
     // fade away the CRUD options and make the API details appear
     crudFadeOut();
-    APICall();
+    $(".content").animate({opacity: '1'}, 'slow');
 
     // home button appearance
     $(".homeButton").animate({opacity: '1'}, 'slow');
@@ -186,9 +230,11 @@ const userChoice = () => {
     // delete button appearance
     $(".deleteButton").text("Remove Item");
     $(".deleteButton").animate({opacity: '1'}, 'slow');
-
+    $(".deleteButton").on("click", function () {
+      deleteItem(objects);
+    });
   });
 
 };
 
-$(document).ready(userChoice);
+$(document).ready(APICall);

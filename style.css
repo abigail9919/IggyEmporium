@@ -139,8 +139,9 @@ button:hover {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    position: absolute;
-    top: 40%;
+    position: relative;
+    top: -50px;
+    opacity: 0;
 }
 
 .item img {
